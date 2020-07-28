@@ -1,9 +1,9 @@
 import tkinter as tk
 import tkinter.filedialog
 import pandas as pd
-import time
+import time, os
 from PIL import ImageTk ,Image
-import os
+import pandas._libs.ops_dispatch
 dir_path = os.getcwd()
 tk.NoDefaultRoot()
 
@@ -22,6 +22,56 @@ root.rowconfigure(1, weight=1)
 root.title("AutoMail")
 center_window(root,800, 600)
 
+# config = open("config.bat")
+
+class Frame2(object) :
+
+    def __init__(self, root) :
+        self.root = root
+
+    def load(self) :
+        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight()-350,bg="#000")
+        self.frame.pack(anchor=tk.N, fill=tk.X, expand=True, side=tk.TOP )
+        # self.frame.grid(row=2, column=0)
+
+        self.stepname = tk.Label(self.frame, text="2.Upload the Certificate.", font=("Helvetica", 36), fg="#4f4f4f" )
+        self.stepname['bg'] = self.stepname.master['bg']
+        self.stepname.pack(side=tk.TOP)
+
+        self.pad1 = tk.Label(self.frame,height=2)
+        self.pad1.pack()
+
+        self.desc_1_1 = tk.Label(self.frame, text="Attach an image file",font=("Helvetica", 18), fg="#4f4f4f", height=2, bg=None )
+        self.desc_1_1.pack(side=tk.TOP)
+
+        # img=ImageTk.PhotoImage(Image.open(dir_path+"/src/assets/button_1_1.png"))
+        self.button1_1 = tk.Button(self.frame, text="Upload Certificate", image=None, command = self.fetchfile, height=2, width=14)
+        self.button1_1.pack()
+
+        self.desc_1_2 = tk.Label(self.frame, text='No File Choosen', font=("Helvetica", 12), fg="#4f4f4f", height=2, bg=None )
+        self.desc_1_2.pack(side=tk.TOP)
+
+        self.imgcanvas = tk.Canvas(self.frame,width=200,height=200,bg='#000')
+        self.imgcanvas.pack()
+
+        self.pad2 = tk.Label(self.frame,height=2)
+        self.pad2.pack()
+
+        self.button1_2 = tk.Button(self.frame, text="Next", image=None, command = None, height=2, width=12)
+        self.button1_2["state"] = "disabled"
+        self.button1_2.pack()
+
+        self.frame.pack_propagate(False) 
+
+    def fetchfile(self) :
+        self.filepath = tk.filedialog.askopenfilename(parent=self.root,filetypes = [("Jpeg", "*.jpg"),("Jpeg", "*.jpeg"),("Png", "*.png"),("Png", "*.bmp")])
+        self.filename = self.filepath.split("/")[-1]
+        self.desc_1_2.configure(text=str("File Choosen: "+self.filename))
+        if len(self.filename)!=0 :
+            self.button1_2["state"] = "normal"
+        else :
+            self.button1_2["state"] = "disabled"
+
 # 1. Upload a certificate
 class Frame1(object) :
 
@@ -30,10 +80,9 @@ class Frame1(object) :
 
     def load(self) :
         self.filepath = None
-        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight()-350,bg="#fff")
+        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight()-350,bg="#444")
         self.frame.pack(anchor=tk.N, fill=tk.X, expand=True, side=tk.TOP )
-        self.frame.grid(row=2, column=0)
-        self.frame.tkraise()
+        # self.frame.grid(row=2, column=0)
 
         self.stepname = tk.Label(self.frame, text="1. Get the mailing list.", font=("Helvetica", 36), fg="#4f4f4f" )
         self.stepname['bg'] = self.stepname.master['bg']
@@ -55,15 +104,6 @@ class Frame1(object) :
         # Image to be added here
         self.imgcanvas = tk.Canvas(self.frame,width=200,height=200,bg='#000')
         self.imgcanvas.pack()
-        # img = tk.PhotoImage(file=dir_path+'/src/assets/sheet_1.gif')
-        # self.imgcanvas.create_image(0,0,anchor=tk.NW,image=img)
-
-        # # PARTION START ------------------------------------------------
-        # self.partition = tk.Canvas(self.frame, width=self.root.winfo_screenwidth()-800, height=100, bg="#fff")
-        # self.partition.pack()
-        # self.partition.create_line(0, 25, self.partition.winfo_screenwidth(), 25,  fill="#c9c9c9")
-        # self.partition.create_text(self.root.winfo_screenwidth()//(4.5),25,text="OR",width=self.partition.winfo_screenwidth(),fill='#000')
-        # # PARTION END ------------------------------------------------
 
         self.pad2 = tk.Label(self.frame,height=2)
         self.pad2.pack()
@@ -112,10 +152,13 @@ class Frame1(object) :
             return
         
         config.DATA_PATH = self.filepath
-        # self.checker.update()
-        self.root.grab_release()
-        
-        
+        self.frame.destroy()
+        f2 = Frame2(self.root)
+        f2.load()
+        # self.frame.geometry('0x0')
+        # self.frame.destroy()
+        f2.frame.tkraise()
+
         return
 
         
@@ -136,60 +179,12 @@ class Frame1(object) :
         self.checkerButton = tk.Button(self.checker, text="Retry", image=None, command = self.checker.destroy , height=2, width=12)
         self.checkerButton.pack()
 
-class Frame2(object) :
-
-    def __init__(self, root) :
-        self.root = root
-
-    def load(self) :
-        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight()-350,bg="#fff")
-        # self.frame.pack(anchor=tk.N, fill=tk.X, expand=True, side=tk.TOP )
-        self.frame.grid(row=2, column=0)
-        self.frame.lift()
-
-        self.stepname = tk.Label(self.frame, text="2.Upload the Certificate.", font=("Helvetica", 36), fg="#4f4f4f" )
-        self.stepname['bg'] = self.stepname.master['bg']
-        self.stepname.pack(side=tk.TOP)
-
-        self.pad1 = tk.Label(self.frame,height=2)
-        self.pad1.pack()
-
-        self.desc_1_1 = tk.Label(self.frame, text="Attach an image file",font=("Helvetica", 18), fg="#4f4f4f", height=2, bg=None )
-        self.desc_1_1.pack(side=tk.TOP)
-
-        # img=ImageTk.PhotoImage(Image.open(dir_path+"/src/assets/button_1_1.png"))
-        self.button1_1 = tk.Button(self.frame, text="Upload Certificate", image=None, command = self.fetchfile, height=2, width=14)
-        self.button1_1.pack()
-
-        self.desc_1_2 = tk.Label(self.frame, text='No File Choosen', font=("Helvetica", 12), fg="#4f4f4f", height=2, bg=None )
-        self.desc_1_2.pack(side=tk.TOP)
-
-        self.imgcanvas = tk.Canvas(self.frame,width=200,height=200,bg='#000')
-        self.imgcanvas.pack()
-
-        self.pad2 = tk.Label(self.frame,height=2)
-        self.pad2.pack()
-
-        self.button1_2 = tk.Button(self.frame, text="Next", image=None, command = None, height=2, width=12)
-        self.button1_2["state"] = "disabled"
-        self.button1_2.pack()
-
-        # self.frame.pack_propagate(False) 
-
-    def fetchfile(self) :
-        self.filepath = tk.filedialog.askopenfilename(parent=self.root,filetypes = [("Jpeg", "*.jpg"),("Jpeg", "*.jpeg"),("Png", "*.png"),("Png", "*.bmp")])
-        self.filename = self.filepath.split("/")[-1]
-        self.desc_1_2.configure(text=str("File Choosen: "+self.filename))
-        if len(self.filename)!=0 :
-            self.button1_2["state"] = "normal"
-        else :
-            self.button1_2["state"] = "disabled"
-
 
 # 1. FileList Upload
 f1 = Frame1(root)
 f1.load()
-f2 = Frame2(root)
+# f1.hide()
+# f2 = Frame2(root)
 # f2.load()
-
+# f2.frame.grid(row=0,column=0,sticky="nsew")
 root.mainloop()
