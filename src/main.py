@@ -5,8 +5,8 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
-from src.sendMail import sendMail
-from src.config import CER_PATH, DATA_PATH
+from sendMail import sendMail
+from config import CER_PATH, DATA_PATH
 import os
 
 BASE_DIR = os.getcwd()
@@ -67,10 +67,10 @@ def run(m_data):
     print("\nFailed Tasks : ", failed)
 
 
-if __name__ == "__main__":
-    try:
-        df = pd.read_csv(os.path.join(os.getcwd(), DATA_PATH))
-        mail_data = createDic(df, ['name', 'email'])
-        run(mail_data)
-    except Exception as e:
-        print("ERROR : ", e)
+# if __name__ == "__main__":
+#     try:
+#         df = pd.read_csv(os.path.join(os.getcwd(), DATA_PATH))
+#         mail_data = createDic(df, ['name', 'email'])
+#         run(mail_data)
+#     except Exception as e:
+#         print("ERROR : ", e)

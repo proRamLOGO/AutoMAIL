@@ -2,7 +2,7 @@ MAIL = "smrnjeet222@gmail.com"
 PASS = "eks..........wxw"
 
 DATA_PATH = "input/test_data.csv"
-CER_PATH = "input/nidhi.jpg"
+CER_PATH = "input/Certificate.jpg"
 
 SUBJECT = "Certificate of participation in event organised by Illuminate society."
 
