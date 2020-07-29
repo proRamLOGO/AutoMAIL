@@ -2,6 +2,8 @@ import tkinter as tk
 import tkinter.filedialog
 import pandas as pd
 import time, os
+import pickle
+# import imagecrop
 from PIL import ImageTk ,Image
 import pandas._libs.ops_dispatch
 dir_path = os.getcwd()
@@ -22,7 +24,18 @@ root.rowconfigure(1, weight=1)
 root.title("AutoMail")
 center_window(root,800, 600)
 
-# config = open("config.bat")
+config = open(os.getcwd() + "/src/config.dat",'wb+')
+pickle.dump({ 'SENDER_EMAIL' : None, 
+              'SENDER_PASSWORD' : None,
+              'DATA_PATH' : None,
+              'CERTIFICATE_PATH' : None,
+              'MAIL_SUBJECT' : None,
+              'MAIL_CONTENT' : None,
+              'X1': 0,
+              'X2': 0,
+              'Y1': 0,
+              'Y2': 0 }, config)
+config.close()
 
 class Frame2(object) :
 
@@ -30,7 +43,7 @@ class Frame2(object) :
         self.root = root
 
     def load(self) :
-        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight()-350,bg="#000")
+        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight(),bg="#fff")
         self.frame.pack(anchor=tk.N, fill=tk.X, expand=True, side=tk.TOP )
         # self.frame.grid(row=2, column=0)
 
@@ -53,11 +66,11 @@ class Frame2(object) :
 
         self.imgcanvas = tk.Canvas(self.frame,width=200,height=200,bg='#000')
         self.imgcanvas.pack()
-
+        
         self.pad2 = tk.Label(self.frame,height=2)
         self.pad2.pack()
 
-        self.button1_2 = tk.Button(self.frame, text="Next", image=None, command = None, height=2, width=12)
+        self.button1_2 = tk.Button(self.frame, text="Next", image=None, command = self.nextpage, height=2, width=12)
         self.button1_2["state"] = "disabled"
         self.button1_2.pack()
 
@@ -72,6 +85,10 @@ class Frame2(object) :
         else :
             self.button1_2["state"] = "disabled"
 
+    def nextpage(self) :
+        import imagecrop
+        self.frame.destroy()
+
 # 1. Upload a certificate
 class Frame1(object) :
 
@@ -80,7 +97,7 @@ class Frame1(object) :
 
     def load(self) :
         self.filepath = None
-        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight()-350,bg="#444")
+        self.frame = tk.Frame(self.root,width=self.root.winfo_screenwidth()-400,height=self.root.winfo_screenheight()-350,bg="#fff")
         self.frame.pack(anchor=tk.N, fill=tk.X, expand=True, side=tk.TOP )
         # self.frame.grid(row=2, column=0)
 
@@ -151,7 +168,13 @@ class Frame1(object) :
             self.raise_validate_error("MULTIPLE NAME COLUMN")
             return
         
-        config.DATA_PATH = self.filepath
+        DB = {}
+        with open('config.dat','rb+') as config :
+            DB = pickle.load(config)
+        DB['DATA_PATH'] = self.filepath
+        with open('config.dat','wb+') as config :
+            pickle.dump(DB,config)
+        
         self.frame.destroy()
         f2 = Frame2(self.root)
         f2.load()
