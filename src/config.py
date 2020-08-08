@@ -1,4 +1,4 @@
-MAIL = "smrnjeet222@gmail.com"
+MAIL = "testyoyo222@gmail.com"
 PASS = "eks..........wxw"
 
 DATA_PATH = "input/test_data.csv"
